@@ -188,6 +188,43 @@ header{
 .mode .model{font-size:.8rem;color:var(--slate);margin-bottom:14px}
 .mode p{color:var(--slate);font-size:.9rem}
 
+/* ===== Cennik ===== */
+.cennik{background:var(--cloud)}
+.plany{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;align-items:stretch}
+.plan{
+  background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+  padding:26px 20px;display:flex;flex-direction:column;position:relative;
+}
+.plan h3{font-size:1.05rem;margin-bottom:10px}
+.plan-cena{margin-bottom:16px}
+.plan-cena b{font-size:1.35rem;font-weight:600;display:block}
+.plan-cena span{color:var(--slate);font-size:.78rem}
+.plan ul{list-style:none;display:grid;gap:8px;margin-bottom:22px;flex:1}
+.plan li{
+  color:var(--slate);font-size:.84rem;padding-left:20px;position:relative;
+}
+.plan li::before{
+  content:"";position:absolute;left:0;top:.32em;width:12px;height:12px;
+  background:var(--blue);border-radius:50%;
+  -webkit-mask:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12"><path d="M2.5 6.5l2.5 2.5 4.5-5" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>') center/contain no-repeat, linear-gradient(#000,#000);
+  mask:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12"><path d="M2.5 6.5l2.5 2.5 4.5-5" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>') center/contain no-repeat;
+  -webkit-mask-composite:source-in;mask-composite:intersect;
+}
+.plan .btn{text-align:center}
+.plan.wyrozniony{
+  border-color:var(--blue);box-shadow:var(--shadow);
+}
+.plan.wyrozniony::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--grad);border-radius:var(--radius) var(--radius) 0 0}
+.plan-znaczek{
+  position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+  background:var(--blue);color:#fff;font-size:.68rem;font-weight:500;
+  padding:3px 12px;border-radius:999px;white-space:nowrap;
+}
+.cennik-nota{color:var(--slate);font-size:.8rem;margin-top:22px;text-align:center}
+@media (max-width:1100px){.plany{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:900px){.plany{grid-template-columns:1fr 1fr}}
+@media (max-width:600px){.plany{grid-template-columns:1fr}}
+
 /* ===== CTA ===== */
 .cta{background:var(--cloud)}
 .cta-box{
@@ -246,9 +283,9 @@ footer{background:var(--navy);color:#B9C2D8;padding:56px 0 40px}
       <li><a href="#funkcje">Funkcje</a></li>
       <li><a href="#jak-dziala">Jak działa</a></li>
       <li><a href="#bezpieczenstwo">Bezpieczeństwo</a></li>
-      <li><a href="#tryby">Tryby mocy</a></li>
+      <li><a href="#cennik">Cennik</a></li>
     </ul>
-    <a class="btn btn-primary" href="#kontakt">Umów prezentację</a>
+    <a class="btn btn-primary" href="https://aqnta.onrender.com/?rejestracja=1">Załóż konto</a>
   </div>
 </header>
 
@@ -263,8 +300,8 @@ footer{background:var(--navy);color:#B9C2D8;padding:56px 0 40px}
         pliku, jednostki redakcyjnej i strony, z której korzystała.
       </p>
       <div class="hero-cta">
-        <a class="btn btn-primary" href="#kontakt">Umów prezentację</a>
-        <a class="btn btn-ghost" href="#funkcje">Zobacz funkcje</a>
+        <a class="btn btn-primary" href="https://aqnta.onrender.com/?rejestracja=1">Załóż darmowe konto</a>
+        <a class="btn btn-ghost" href="#cennik">Zobacz cennik</a>
       </div>
       <div class="hero-badges">
         <span>
@@ -466,6 +503,73 @@ footer{background:var(--navy);color:#B9C2D8;padding:56px 0 40px}
   </div>
 </section>
 
+<section class="section cennik" id="cennik">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">Cennik</span>
+      <h2>Plan rośnie razem z Tobą</h2>
+      <p>Każdy plan wyznacza miesięczny budżet na tokeny Claude — realny koszt
+      pracy modelu, bez ukrytych przeliczników. Zaczynasz za darmo, przechodzisz
+      wyżej, gdy potrzebujesz więcej.</p>
+    </div>
+    <div class="plany">
+      <div class="plan reveal">
+        <h3>Start</h3>
+        <div class="plan-cena"><b>0 zł</b><span>na zawsze</span></div>
+        <ul>
+          <li>1 $ tokenów Claude / mies.</li>
+          <li>Pytania z cytowaniem źródeł</li>
+          <li>Własne dokumenty</li>
+        </ul>
+        <a class="btn btn-ghost" href="https://aqnta.onrender.com/?rejestracja=1">Załóż konto</a>
+      </div>
+      <div class="plan reveal">
+        <h3>Self</h3>
+        <div class="plan-cena"><b>39,99 zł</b><span>miesięcznie</span></div>
+        <ul>
+          <li>5 $ tokenów Claude / mies.</li>
+          <li>Wszystkie funkcje asystenta</li>
+          <li>Analiza dokumentów i pisma</li>
+        </ul>
+        <a class="btn btn-ghost" href="https://aqnta.onrender.com/?rejestracja=1">Wybierz Self</a>
+      </div>
+      <div class="plan wyrozniony reveal">
+        <div class="plan-znaczek">Najczęściej wybierany</div>
+        <h3>Growth</h3>
+        <div class="plan-cena"><b>99,99 zł</b><span>miesięcznie</span></div>
+        <ul>
+          <li>10 $ tokenów Claude / mies.</li>
+          <li>Wszystkie funkcje asystenta</li>
+          <li>Priorytetowe wsparcie</li>
+        </ul>
+        <a class="btn btn-primary" href="https://aqnta.onrender.com/?rejestracja=1">Wybierz Growth</a>
+      </div>
+      <div class="plan reveal">
+        <h3>Max</h3>
+        <div class="plan-cena"><b>199,99 zł</b><span>miesięcznie</span></div>
+        <ul>
+          <li>20 $ tokenów Claude / mies.</li>
+          <li>Wszystkie funkcje asystenta</li>
+          <li>Najintensywniejsza praca</li>
+        </ul>
+        <a class="btn btn-ghost" href="https://aqnta.onrender.com/?rejestracja=1">Wybierz Max</a>
+      </div>
+      <div class="plan reveal">
+        <h3>Enterprise</h3>
+        <div class="plan-cena"><b>599,99 zł</b><span>mies. / stanowisko</span></div>
+        <ul>
+          <li>Bez limitu tokenów Claude</li>
+          <li>Wdrożenie i szkolenie zespołu</li>
+          <li>Umowa powierzenia danych</li>
+        </ul>
+        <a class="btn btn-ghost" href="mailto:kontakt@aqnta.pl?subject=Aqnta%20Enterprise">Porozmawiajmy</a>
+      </div>
+    </div>
+    <p class="cennik-nota reveal">Ceny brutto. Limit planu to miesięczny budżet kosztu tokenów
+    API Anthropic zużytych przez Twoje konto; odnawia się 1. dnia miesiąca.</p>
+  </div>
+</section>
+
 <section class="section cta" id="kontakt">
   <div class="wrap">
     <div class="cta-box reveal">
@@ -486,6 +590,7 @@ footer{background:var(--navy);color:#B9C2D8;padding:56px 0 40px}
         <li><a href="#funkcje">Funkcje</a></li>
         <li><a href="#jak-dziala">Jak działa</a></li>
         <li><a href="#bezpieczenstwo">Bezpieczeństwo</a></li>
+        <li><a href="#cennik">Cennik</a></li>
         <li><a href="#kontakt">Kontakt</a></li>
       </ul>
     </div>
