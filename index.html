@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aqnta — asystent AI kancelarii podatkowo-księgowej</title>
+<meta name="description" content="Aqnta odpowiada na pytania podatkowe wyłącznie na podstawie zaufanej bazy przepisów — zawsze z cytowaniem źródeł. Analiza dokumentów, szkice pism, dane w UE.">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/app-icon-180.png">
+<meta property="og:title" content="Aqnta — analityka, która ma sens">
+<meta property="og:description" content="Asystent AI dla kancelarii podatkowo-księgowej. Odpowiedzi z przepisów, zawsze ze wskazaniem źródła.">
+<style>
+/* ===== Fonty — Poppins, self-hosted (RODO) ===== */
+@font-face{font-family:'Poppins';font-style:normal;font-weight:300;font-display:swap;src:url(assets/fonts/poppins-300-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Poppins';font-style:normal;font-weight:300;font-display:swap;src:url(assets/fonts/poppins-300-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Poppins';font-style:normal;font-weight:400;font-display:swap;src:url(assets/fonts/poppins-400-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Poppins';font-style:normal;font-weight:400;font-display:swap;src:url(assets/fonts/poppins-400-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Poppins';font-style:normal;font-weight:500;font-display:swap;src:url(assets/fonts/poppins-500-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Poppins';font-style:normal;font-weight:500;font-display:swap;src:url(assets/fonts/poppins-500-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Poppins';font-style:normal;font-weight:600;font-display:swap;src:url(assets/fonts/poppins-600-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Poppins';font-style:normal;font-weight:600;font-display:swap;src:url(assets/fonts/poppins-600-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+
+/* ===== Paleta marki — brandbook v1.0, sekcja 08 ===== */
+:root{
+  --blue:#1555EE;   /* Aqnta Blue — akcenty, CTA */
+  --deep:#0631BE;   /* Deep Blue — gradienty, głębia */
+  --sky:#4DC0FA;    /* Sky — rozjaśnienia */
+  --navy:#0B1638;   /* Navy — typografia, tła */
+  --cloud:#F5F7FB;  /* tła sekcji */
+  --line:#E4E9F2;   /* linie, obramowania */
+  --slate:#6B7793;  /* tekst uzupełniający */
+  --white:#FFFFFF;
+  --grad:linear-gradient(135deg,#4DC0FA 0%,#1555EE 55%,#0631BE 100%);
+  --radius:14px;
+  --shadow:0 10px 40px rgba(11,22,56,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Poppins',Arial,Helvetica,sans-serif;
+  font-weight:300;                 /* tekst podstawowy: Light */
+  line-height:1.45;                /* interlinia wg brandbooka */
+  color:var(--navy);
+  background:var(--white);
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-weight:500;line-height:1.25}  /* nagłówki: Medium */
+img{max-width:100%;height:auto;display:block}
+a{color:var(--blue)}
+.wrap{max-width:1140px;margin:0 auto;padding:0 24px}
+.kicker{
+  display:inline-block;font-size:.78rem;font-weight:500;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--blue);margin-bottom:14px;
+}
+.section{padding:96px 0}
+.section-head{max-width:640px;margin-bottom:56px}
+.section-head h2{font-size:clamp(1.6rem,3.2vw,2.2rem);margin-bottom:14px}
+.section-head p{color:var(--slate);font-size:1.02rem}
+
+/* ===== Nagłówek ===== */
+header{
+  position:sticky;top:0;z-index:50;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.nav{display:flex;align-items:center;justify-content:space-between;height:72px}
+.nav-logo img{height:34px;width:auto}
+.nav-links{display:flex;gap:32px;list-style:none}
+.nav-links a{
+  color:var(--navy);text-decoration:none;font-size:.92rem;font-weight:400;
+}
+.nav-links a:hover{color:var(--blue)}
+.btn{
+  display:inline-block;padding:12px 26px;border-radius:10px;
+  font-family:inherit;font-size:.95rem;font-weight:500;text-decoration:none;
+  transition:transform .15s ease, box-shadow .15s ease;cursor:pointer;border:0;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:var(--blue);color:#fff;box-shadow:0 6px 18px rgba(21,85,238,.28)}
+.btn-primary:hover{box-shadow:0 10px 24px rgba(21,85,238,.35)}
+.btn-ghost{color:var(--navy);border:1px solid var(--line);background:#fff}
+.btn-ghost:hover{border-color:var(--blue);color:var(--blue)}
+.nav .btn{padding:10px 20px}
+
+/* ===== Hero ===== */
+.hero{background:var(--cloud);overflow:hidden;position:relative}
+.hero-inner{
+  display:grid;grid-template-columns:1.05fr .95fr;gap:64px;align-items:center;
+  padding:88px 0 96px;position:relative;z-index:1;
+}
+.hero h1{font-size:clamp(2rem,4.4vw,3.1rem);margin-bottom:20px;letter-spacing:-.01em}
+.hero h1 em{font-style:normal;color:var(--blue)}
+.hero-lead{color:var(--slate);font-size:1.12rem;max-width:32em;margin-bottom:32px}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:36px}
+.hero-badges{display:flex;gap:22px;flex-wrap:wrap;color:var(--slate);font-size:.85rem}
+.hero-badges span{display:flex;align-items:center;gap:8px}
+.hero-badges svg{flex:none}
+/* dekoracyjna wstęga gradientowa — nigdy pod tekstem */
+.hero::after{
+  content:"";position:absolute;right:-180px;top:-180px;width:560px;height:560px;
+  background:var(--grad);opacity:.10;border-radius:50%;filter:blur(2px);
+}
+
+/* Mock okna czatu */
+.chat{
+  background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);overflow:hidden;font-size:.85rem;
+}
+.chat-bar{
+  display:flex;align-items:center;gap:10px;padding:12px 16px;
+  border-bottom:1px solid var(--line);background:var(--cloud);
+}
+.chat-bar img{height:20px;width:auto}
+.chat-bar i{font-style:normal;color:var(--slate);font-size:.78rem;margin-left:auto}
+.chat-body{padding:18px}
+.msg{max-width:88%;padding:12px 16px;border-radius:12px;margin-bottom:14px}
+.msg-user{background:var(--blue);color:#fff;margin-left:auto;border-bottom-right-radius:4px}
+.msg-ai{background:var(--cloud);border:1px solid var(--line);border-bottom-left-radius:4px}
+.msg-ai p{margin-bottom:8px}
+.msg-ai .ref{color:var(--blue);font-weight:500;white-space:nowrap}
+.sources{border-top:1px dashed var(--line);margin-top:10px;padding-top:10px}
+.sources b{display:block;font-weight:500;font-size:.75rem;color:var(--slate);margin-bottom:8px;letter-spacing:.06em;text-transform:uppercase}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;margin:0 6px 6px 0;
+  padding:4px 10px;border:1px solid var(--line);border-radius:999px;
+  background:#fff;font-size:.72rem;color:var(--navy);
+}
+.chip em{font-style:normal;color:var(--blue);font-weight:500}
+.disclaimer{font-size:.7rem;color:var(--slate);margin-top:6px}
+
+/* ===== Funkcje ===== */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.card{
+  background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+  padding:30px 26px;transition:box-shadow .2s ease, transform .2s ease;
+}
+.card:hover{box-shadow:var(--shadow);transform:translateY(-3px)}
+.card-ico{
+  width:46px;height:46px;border-radius:12px;background:var(--cloud);
+  display:flex;align-items:center;justify-content:center;margin-bottom:18px;
+}
+.card h3{font-size:1.05rem;margin-bottom:8px}
+.card p{color:var(--slate);font-size:.92rem}
+
+/* ===== Jak działa ===== */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;counter-reset:step}
+.step{position:relative;padding:30px 26px;background:var(--cloud);border-radius:var(--radius)}
+.step::before{
+  counter-increment:step;content:"0" counter(step);
+  display:block;font-size:1.9rem;font-weight:600;margin-bottom:14px;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.step h3{font-size:1.05rem;margin-bottom:8px}
+.step p{color:var(--slate);font-size:.92rem}
+
+/* ===== Bezpieczeństwo (ciemna sekcja — logo białe) ===== */
+.dark{background:var(--navy);color:#fff;position:relative;overflow:hidden}
+.dark::before{
+  content:"";position:absolute;left:-160px;bottom:-220px;width:480px;height:480px;
+  background:var(--grad);opacity:.16;border-radius:50%;
+}
+.dark .wrap{position:relative;z-index:1}
+.dark-inner{display:grid;grid-template-columns:.9fr 1.1fr;gap:72px;align-items:center}
+.dark-logo{max-width:220px;margin-bottom:8px}
+.dark h2{font-size:clamp(1.5rem,3vw,2rem);margin-bottom:14px}
+.dark-lead{color:#B9C2D8;font-size:1rem;max-width:30em}
+.sec-list{list-style:none;display:grid;gap:18px}
+.sec-list li{
+  display:flex;gap:16px;align-items:flex-start;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
+  border-radius:12px;padding:18px 20px;
+}
+.sec-list svg{flex:none;margin-top:2px}
+.sec-list b{display:block;font-weight:500;margin-bottom:3px}
+.sec-list span{color:#B9C2D8;font-size:.9rem;font-weight:300}
+
+/* ===== Tryby mocy ===== */
+.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.mode{
+  border:1px solid var(--line);border-radius:var(--radius);padding:30px 26px;
+  background:#fff;position:relative;overflow:hidden;
+}
+.mode::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--line)}
+.mode.mid::before{background:var(--sky)}
+.mode.max::before{background:var(--blue)}
+.mode.xmax::before{background:var(--grad)}
+.mode h3{font-size:1.1rem;margin-bottom:4px}
+.mode .model{font-size:.8rem;color:var(--slate);margin-bottom:14px}
+.mode p{color:var(--slate);font-size:.9rem}
+
+/* ===== CTA ===== */
+.cta{background:var(--cloud)}
+.cta-box{
+  background:#fff;border:1px solid var(--line);border-radius:20px;
+  box-shadow:var(--shadow);padding:64px 40px;text-align:center;
+  position:relative;overflow:hidden;
+}
+.cta-box::before{content:"";position:absolute;inset:0 0 auto 0;height:6px;background:var(--grad)}
+.cta-box img{height:88px;width:auto;margin:0 auto 24px}
+.cta-box h2{font-size:clamp(1.5rem,3vw,2rem);margin-bottom:12px}
+.cta-box p{color:var(--slate);max-width:34em;margin:0 auto 30px}
+
+/* ===== Stopka ===== */
+footer{background:var(--navy);color:#B9C2D8;padding:56px 0 40px}
+.foot{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.foot img{height:60px;width:auto}
+.foot-links{display:flex;gap:26px;list-style:none;flex-wrap:wrap}
+.foot-links a{color:#B9C2D8;text-decoration:none;font-size:.88rem}
+.foot-links a:hover{color:#fff}
+.foot-bottom{
+  border-top:1px solid rgba(255,255,255,.12);margin-top:36px;padding-top:24px;
+  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  font-size:.8rem;color:#8A94B0;
+}
+
+/* ===== Animacja wejścia ===== */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none}
+  html{scroll-behavior:auto}
+}
+
+/* ===== Responsywność ===== */
+@media (max-width:900px){
+  .hero-inner{grid-template-columns:1fr;gap:48px;padding:56px 0 64px}
+  .grid,.steps,.modes{grid-template-columns:1fr 1fr}
+  .dark-inner{grid-template-columns:1fr;gap:44px}
+  .nav-links{display:none}
+}
+@media (max-width:600px){
+  .grid,.steps,.modes{grid-template-columns:1fr}
+  .section{padding:64px 0}
+  .cta-box{padding:44px 22px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="nav-logo" href="#" aria-label="Aqnta — strona główna">
+      <img src="assets/logo-poziom.png" alt="aqnta">
+    </a>
+    <ul class="nav-links">
+      <li><a href="#funkcje">Funkcje</a></li>
+      <li><a href="#jak-dziala">Jak działa</a></li>
+      <li><a href="#bezpieczenstwo">Bezpieczeństwo</a></li>
+      <li><a href="#tryby">Tryby mocy</a></li>
+    </ul>
+    <a class="btn btn-primary" href="#kontakt">Umów prezentację</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div>
+      <span class="kicker">Asystent AI kancelarii podatkowo-księgowej</span>
+      <h1>Analityka, która ma sens.<br>Odpowiedzi <em>zawsze ze źródłem</em>.</h1>
+      <p class="hero-lead">
+        Aqnta odpowiada na pytania podatkowe wyłącznie na podstawie zaufanej bazy
+        przepisów i dokumentów kancelarii — a każdą odpowiedź kończy wskazaniem
+        pliku, jednostki redakcyjnej i strony, z której korzystała.
+      </p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#kontakt">Umów prezentację</a>
+        <a class="btn btn-ghost" href="#funkcje">Zobacz funkcje</a>
+      </div>
+      <div class="hero-badges">
+        <span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1l5.5 2v3.7c0 3.4-2.3 6.5-5.5 7.8C4.8 13.2 2.5 10.1 2.5 6.7V3L8 1z" stroke="#1555EE" stroke-width="1.4" stroke-linejoin="round"/><path d="M5.6 7.9l1.7 1.7 3.1-3.4" stroke="#1555EE" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Dane w UE — Frankfurt
+        </span>
+        <span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="10" rx="1.5" stroke="#1555EE" stroke-width="1.4"/><path d="M5 6.5h6M5 9h4" stroke="#1555EE" stroke-width="1.4" stroke-linecap="round"/></svg>
+          Cytowane źródła
+        </span>
+        <span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#1555EE" stroke-width="1.4"/><path d="M8 5v3l2 2" stroke="#1555EE" stroke-width="1.4" stroke-linecap="round"/></svg>
+          Odpowiedź w sekundach
+        </span>
+      </div>
+    </div>
+
+    <div class="chat" aria-hidden="true">
+      <div class="chat-bar">
+        <img src="assets/logo-poziom.png" alt="">
+        <i>Pytania · baza „przepisy”</i>
+      </div>
+      <div class="chat-body">
+        <div class="msg msg-user">
+          Czy usługa szkoleniowa dla firmy z Niemiec podlega VAT w Polsce?
+        </div>
+        <div class="msg msg-ai">
+          <p>
+            Nie — miejscem świadczenia usługi na rzecz podatnika z innego kraju UE
+            jest siedziba usługobiorcy <span class="ref">[1]</span>. Fakturę wystawiasz
+            bez VAT z adnotacją „odwrotne obciążenie” <span class="ref">[2]</span>.
+          </p>
+          <div class="sources">
+            <b>Źródła</b>
+            <span class="chip">1 · ustawa o VAT, art. 28b · s. 84 · <em>93%</em></span>
+            <span class="chip">2 · ustawa o VAT, art. 106e · s. 201 · <em>88%</em></span>
+            <p class="disclaimer">Materiał pomocniczy — wymaga weryfikacji przez doradcę.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="funkcje">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">Funkcje</span>
+      <h2>Jedno narzędzie do pytań, dokumentów i pism</h2>
+      <p>Czat z paskiem funkcji — wszystko, czego zespół kancelarii używa codziennie,
+      w jednym oknie i na wspólnej, kontrolowanej bazie wiedzy.</p>
+    </div>
+    <div class="grid">
+      <div class="card reveal">
+        <div class="card-ico">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 5.5A2.5 2.5 0 015.5 3h11A2.5 2.5 0 0119 5.5v7a2.5 2.5 0 01-2.5 2.5H8l-4 4V15H5.5A2.5 2.5 0 013 12.5v-7z" stroke="#1555EE" stroke-width="1.6" stroke-linejoin="round"/><path d="M7 8h8M7 11h5" stroke="#1555EE" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Pytania</h3>
+        <p>Odpowiedzi z przepisów z numerami źródeł — plik, jednostka redakcyjna,
+        strona i stopień dopasowania pod każdą odpowiedzią.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-ico">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M6 2.8h7l4 4v10.4a2 2 0 01-2 2H6a2 2 0 01-2-2V4.8a2 2 0 012-2z" stroke="#1555EE" stroke-width="1.6" stroke-linejoin="round"/><path d="M13 3v4h4" stroke="#1555EE" stroke-width="1.6" stroke-linejoin="round"/><path d="M7.5 12l2 2 4-4.5" stroke="#1555EE" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Analiza dokumentów</h3>
+        <p>Zestawia dokument klienta z przepisami i wypisuje braki —
+        zanim zrobi to urząd.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-ico">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 18.5V15L14.5 4.5a2.1 2.1 0 013 3L7 18l-3 .5z" stroke="#1555EE" stroke-width="1.6" stroke-linejoin="round"/><path d="M12.5 6.5l3 3" stroke="#1555EE" stroke-width="1.6"/></svg>
+        </div>
+        <h3>Pisma i opinie</h3>
+        <p>Szkic o formalnej strukturze; luki do uzupełnienia oznaczone
+        wyraźnie — nic nie jest „domyślane” za doradcę.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-ico">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 3v10m0-10L7.5 6.5M11 3l3.5 3.5" stroke="#1555EE" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 14v3a2 2 0 002 2h10a2 2 0 002-2v-3" stroke="#1555EE" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Moje dokumenty</h3>
+        <p>Prywatna kolekcja plików każdego użytkownika — pytania można
+        zadawać także o własne umowy i faktury.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-ico">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><ellipse cx="11" cy="5" rx="7" ry="2.6" stroke="#1555EE" stroke-width="1.6"/><path d="M4 5v11.5c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6V5" stroke="#1555EE" stroke-width="1.6"/><path d="M4 11c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6" stroke="#1555EE" stroke-width="1.6"/></svg>
+        </div>
+        <h3>Baza wiedzy</h3>
+        <p>Kolekcje „przepisy” i „kancelaria” pod pełną kontrolą zespołu —
+        to Ty decydujesz, z czego korzysta model.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-ico">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="8" cy="7.5" r="3" stroke="#1555EE" stroke-width="1.6"/><path d="M2.5 18c.7-3 2.9-4.5 5.5-4.5S12.8 15 13.5 18" stroke="#1555EE" stroke-width="1.6" stroke-linecap="round"/><circle cx="15.5" cy="8.5" r="2.3" stroke="#1555EE" stroke-width="1.6"/><path d="M15 13.6c2.3.1 4 1.4 4.5 3.9" stroke="#1555EE" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Role i konta</h3>
+        <p>Klient, pracownik, administrator — każdy widzi tylko swoje.
+        Usunięcie konta kasuje dokumenty klienta.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="jak-dziala" style="background:var(--white);padding-top:0">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">Jak działa</span>
+      <h2>RAG: model nie zgaduje — czyta</h2>
+      <p>Retrieval-Augmented Generation oznacza, że odpowiedź powstaje wyłącznie
+      z fragmentów odnalezionych w zaufanej bazie, nie z „pamięci” modelu.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <h3>Zadajesz pytanie</h3>
+        <p>Po polsku, jak koledze z pokoju obok. Możesz dołączyć dokument
+        klienta do analizy.</p>
+      </div>
+      <div class="step reveal">
+        <h3>Aqnta przeszukuje bazę</h3>
+        <p>Wyszukiwanie semantyczne z rerankingiem znajduje właściwe artykuły
+        ustaw i dokumenty kancelarii — nie „podobne słowa”.</p>
+      </div>
+      <div class="step reveal">
+        <h3>Odpowiedź z cytatami</h3>
+        <p>Każde twierdzenie ma numer źródła: plik, artykuł, strona, stopień
+        dopasowania. Do skopiowania lub pobrania jednym kliknięciem.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section dark" id="bezpieczenstwo">
+  <div class="wrap dark-inner">
+    <div class="reveal">
+      <img class="dark-logo" src="assets/logo-bialy.png" alt="aqnta">
+      <h2>Zaprojektowana dla danych, których nie wolno zgubić</h2>
+      <p class="dark-lead">Kancelaria pracuje na danych objętych tajemnicą zawodową
+      i RODO. Aqnta traktuje to jak wymaganie konstrukcyjne, nie dodatek.</p>
+    </div>
+    <ul class="sec-list">
+      <li class="reveal">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 1.5l7 2.5v4.6c0 4.2-2.9 8-7 9.6-4.1-1.6-7-5.4-7-9.6V4l7-2.5z" stroke="#4DC0FA" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.8 9.9l2.2 2.2 4-4.4" stroke="#4DC0FA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div><b>Hosting w UE</b>
+        <span>Serwery w regionie Frankfurt, dysk trwały na dane — nic nie opuszcza
+        Unii bez Twojej decyzji.</span></div>
+      </li>
+      <li class="reveal">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="8.5" width="14" height="9" rx="1.8" stroke="#4DC0FA" stroke-width="1.5"/><path d="M6.5 8.5V6a3.5 3.5 0 017 0v2.5" stroke="#4DC0FA" stroke-width="1.5"/><circle cx="10" cy="13" r="1.4" fill="#4DC0FA"/></svg>
+        <div><b>Izolacja danych ról</b>
+        <span>Klient nigdy nie zobaczy dokumentów innego klienta. Pracownik i admin
+        mają osobne uprawnienia do bazy wiedzy.</span></div>
+      </li>
+      <li class="reveal">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 3h9l3 3v11a1.5 1.5 0 01-1.5 1.5h-9A1.5 1.5 0 014 17V3z" stroke="#4DC0FA" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 8.5h6M7 11.5h6M7 14.5h4" stroke="#4DC0FA" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <div><b>Dziennik zdarzeń</b>
+        <span>Logowania, wgrania i usunięcia dokumentów są rejestrowane —
+        rozliczalność zgodna z RODO.</span></div>
+      </li>
+      <li class="reveal">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="#4DC0FA" stroke-width="1.5"/><path d="M10 6.5v4M10 13.5h.01" stroke="#4DC0FA" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <div><b>Człowiek ma ostatnie słowo</b>
+        <span>Każda odpowiedź jest oznaczona jako materiał pomocniczy wymagający
+        weryfikacji przez doradcę.</span></div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section class="section" id="tryby">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">Tryby mocy</span>
+      <h2>Model dopasowany do wagi sprawy</h2>
+      <p>Proste pytanie nie potrzebuje najdroższego modelu, a opinia dla zarządu —
+      owszem. Tryb mocy przełączasz jednym kliknięciem.</p>
+    </div>
+    <div class="modes">
+      <div class="mode mid reveal">
+        <h3>Midi</h3>
+        <div class="model">Claude Sonnet</div>
+        <p>Codzienne pytania i szybkie odpowiedzi — najniższy koszt,
+        krótki czas oczekiwania.</p>
+      </div>
+      <div class="mode max reveal">
+        <h3>Max</h3>
+        <div class="model">Claude Opus</div>
+        <p>Analiza dokumentów i trudniejsze zagadnienia wymagające
+        głębszego rozumowania.</p>
+      </div>
+      <div class="mode xmax reveal">
+        <h3>Extra Max</h3>
+        <div class="model">Claude Fable</div>
+        <p>Najwyższa precyzja: opinie, pisma i sprawy, w których nie ma
+        miejsca na przybliżenia.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section cta" id="kontakt">
+  <div class="wrap">
+    <div class="cta-box reveal">
+      <img src="assets/sygnet.png" alt="">
+      <h2>Zobacz Aqntę na dokumentach swojej kancelarii</h2>
+      <p>Umów krótką prezentację — pokażemy, jak Aqnta odpowiada na prawdziwe
+      pytania Twoich klientów i gdzie wskazuje źródła.</p>
+      <a class="btn btn-primary" href="mailto:kontakt@aqnta.pl?subject=Prezentacja%20Aqnta">Napisz: kontakt@aqnta.pl</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <img src="assets/logo-bialy.png" alt="aqnta">
+      <ul class="foot-links">
+        <li><a href="#funkcje">Funkcje</a></li>
+        <li><a href="#jak-dziala">Jak działa</a></li>
+        <li><a href="#bezpieczenstwo">Bezpieczeństwo</a></li>
+        <li><a href="#kontakt">Kontakt</a></li>
+      </ul>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 aqnta · aqnta.pl</span>
+      <span>Asystent AI dla kancelarii podatkowo-księgowych</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Animacja wejścia sekcji
+const io = new IntersectionObserver(entries => {
+  for (const e of entries) if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+}, { threshold: .12 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
